@@ -5,16 +5,26 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Socket Basics</title>
+    <title>Socket.IO Basics</title>
 </head>
 
 <body>
-    <script src="jquery-3.6.0.min.js"></script>
-    <script src="socket.io.min.js"></script>
+
+    <div class="messages">
+        <!-- Messages end up here -->
+    </div>
+    <form id="message-form">
+        <input type="text" name="message"/>
+        <input type="submit" name="submit" />
+    </form>
+
+    <script src="/js/jquery-3.6.0.min.js"></script>
+    <script src="/js/socket.io.min.js"></script>
+    <script src="/js/moment.js"></script>
     <!-- <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"
         integrity="sha384-fKnu0iswBIqkjxrhQCTZ7qlLHOFEgNkRmK2vaO/LbTZSXdJfAu6ewRBdwHPhBo/H"
         crossorigin="anonymous"></script> -->
-    <script src="app.js"></script>
+    <script src="/js/app.js"></script>
 
 </body>
 
