@@ -17,12 +17,14 @@ socket.on('message', function(message) {
     
     let momentTimestamp = moment().utc(message.timestamp);
     let $message = jQuery('.messages');
+    let $messages = jQuery('<li class="list-group-item">  </li>')
     
     console.log('New Message ... ');
     console.log(message.text);
 
-    $message.append(`<p> <strong> ${message.name} - ${momentTimestamp.format('hh:mm A')} </strong> : </p>`);
-    $message.append(`<p> ${message.text} </p>`);
+    $messages.append(`<p> <strong> ${message.name} - ${momentTimestamp.format('hh:mm A')} </strong> : </p>`);
+    $messages.append(`<p> ${message.text} </p>`);
+    $message.append($messages);
 });
 
 // Handles submitting of new message
