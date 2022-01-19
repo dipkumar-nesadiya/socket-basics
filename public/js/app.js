@@ -10,7 +10,7 @@ socket.on('connect', () => {
     socket.emit('joinRoom', {
         name: name,
         room: room
-    })
+    });
 });
 
 socket.on('message', function(message) {

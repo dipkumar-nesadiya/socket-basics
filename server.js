@@ -12,15 +12,30 @@ let clientInfo = {};
 io.on('connection', (socket) => {
     console.log('User connected via socket.io');
 
+    socket.on('disconnect', function () {
+        let userData = clientInfo[socket.id];
+        console.log(userData);
+
+        if (typeof userData !== 'undefined') {
+            socket.leave(userData.room);
+            io.to(userData.room).emit('message', {
+                name: 'System',
+                text: `<b style="color:red"> ${userData.name} has left! </b>`,
+                timestamp: moment().valueOf()
+            });
+            delete clientInfo[socket.id];
+        }
+    });
+
     socket.on('joinRoom', (req) => {
         clientInfo[socket.id] = req;
         socket.join(req.room);
         socket.broadcast.to(req.room).emit('message', {
             name: 'System',
-            text: `${req.name} has joined!`,
+            text: `<b style="color:green"> ${req.name} has joined! </b>`,
             timestamp: moment().valueOf()
-        })
-    })
+        });
+    });
     
     socket.on('message', (message) => {
         console.log(`Message received : ${message.text}`);
