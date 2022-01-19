@@ -5,16 +5,38 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const moment = require('moment');
 
-app.use(express.static(__dirname+'/public'));
+app.use(express.static(__dirname + '/public'));
 
 let clientInfo = {};
+
+function sendCurrentUsersInfo(socket) {
+    let info = clientInfo[socket.id];
+    let users = [];
+
+    if (typeof info === 'undefined') {
+        return;
+    }
+
+    Object.keys(clientInfo).forEach((socketID) => {
+        let userInfo = clientInfo[socketID];
+
+        if (userInfo.room === info.room) {
+            users.push(userInfo.name);
+        }
+    });
+
+    socket.emit('message', {
+        name: 'System',
+        text: 'Current Users: ' + users.join(', '),
+        timestamp: moment().valueOf()
+    });
+}
 
 io.on('connection', (socket) => {
     console.log('User connected via socket.io');
 
     socket.on('disconnect', function () {
         let userData = clientInfo[socket.id];
-        console.log(userData);
 
         if (typeof userData !== 'undefined') {
             socket.leave(userData.room);
@@ -36,20 +58,24 @@ io.on('connection', (socket) => {
             timestamp: moment().valueOf()
         });
     });
-    
+
     socket.on('message', (message) => {
         console.log(`Message received : ${message.text}`);
 
-        message.timestamp = moment().valueOf();
-        
-        io.to(clientInfo[socket.id].room).emit('message',message); //Send message including sender
-        // socket.broadcast.emit('message',message); //Send message excluding sender
+        if (message.text === '@currentUser') {
+            sendCurrentUsersInfo(socket);
+        } else {
+            message.timestamp = moment().valueOf();
+
+            io.to(clientInfo[socket.id].room).emit('message', message); //Send message including sender
+            // socket.broadcast.emit('message',message); //Send message excluding sender
+        }
     });
 
-    socket.emit('message',{
-        text : 'Welcome to the chat application',
-        name : 'System',
-        timestamp : moment().valueOf()
+    socket.emit('message', {
+        text: 'Welcome to the chat application',
+        name: 'System',
+        timestamp: moment().valueOf()
     });
 });
 
